@@ -15,12 +15,25 @@ public class ParserRestClient implements ParserClient {
 	
 	private static final String PARSER_URL = "http://localhost:8080/parser/parser";
 	
-	private ObjectMapper objectMapper = new ObjectMapper();
+	private ObjectMapper objectMapper;
+	private Client client;
+	
+	public ParserRestClient(ObjectMapper objectMapper, Client client) {
+		this.objectMapper = objectMapper;
+		this.client = client;
+	}
+	
+	public ParserRestClient( Client client ) {
+		this.objectMapper = new ObjectMapper();
+		this.client = client;
+	}
+	
+	public ParserRestClient() {
+		this(new ObjectMapper(), Client.create());
+	}	
 
 	@Override
 	public ParseResponse calculate(ParseRequest parseRequest) throws IOException {
-		
-		final Client client = Client.create();
 		
 		WebResource webResource = client.resource(PARSER_URL);
 		
