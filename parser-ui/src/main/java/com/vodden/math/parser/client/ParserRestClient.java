@@ -13,29 +13,34 @@ import com.vodden.math.parser.client.domain.ParseResponse;
 
 public class ParserRestClient implements ParserClient {
 	
-	private static final String PARSER_URL = "http://localhost:8080/parser/parser";
+	private static final String DEFAULT_PARSER_URL = "http://localhost:8080/parser/parser";
+	private String parserUrl;
 	
 	private ObjectMapper objectMapper;
 	private Client client;
 	
-	public ParserRestClient(ObjectMapper objectMapper, Client client) {
+	public ParserRestClient(ObjectMapper objectMapper, Client client, String parserUrl) {
 		this.objectMapper = objectMapper;
 		this.client = client;
+		this.parserUrl = parserUrl;
 	}
 	
 	public ParserRestClient( Client client ) {
-		this.objectMapper = new ObjectMapper();
-		this.client = client;
+		this(new ObjectMapper(), client, DEFAULT_PARSER_URL);
+	}
+	
+	public ParserRestClient(String parserUrl) {
+		this(new ObjectMapper(), Client.create(), parserUrl);
 	}
 	
 	public ParserRestClient() {
-		this(new ObjectMapper(), Client.create());
+		this(new ObjectMapper(), Client.create(), DEFAULT_PARSER_URL);
 	}	
 
 	@Override
 	public ParseResponse calculate(ParseRequest parseRequest) throws IOException {
 		
-		WebResource webResource = client.resource(PARSER_URL);
+		WebResource webResource = client.resource(parserUrl);
 		
 		String requestJSON = objectMapper.writeValueAsString(parseRequest);
 		
